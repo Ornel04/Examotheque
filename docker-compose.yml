@@ -1,26 +1,27 @@
-version: '3.8'
-
 services:
   frontend:
     build:
-      context: ./../frontend
+      context: ./frontend
     ports:
-      - "3000:3000"
+      - "3000:80"          # Nginx écoute sur 80 à l'intérieur
     volumes:
-      - ./../frontend:/app
+      - ./frontend:/usr/share/nginx/html
     depends_on:
       - backend
 
   backend:
     build:
-      context: ./../backend
+      context: ./backend
     ports:
-      - "8000:8000"
+      - "8000:80"          # Apache écoute sur 80 à l'intérieur
     volumes:
-      - ./../backend:/app
+      - ./backend:/var/www/html
     environment:
       - DB_HOST=db
       - DB_PORT=5432
+      - DB_NAME=mydb
+      - DB_USER=myuser
+      - DB_PASSWORD=mypassword
     depends_on:
       - db
 

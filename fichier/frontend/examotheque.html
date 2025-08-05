@@ -15,7 +15,7 @@
             font-family: Arial, sans-serif;
             background-color: white;
             min-height: 100vh;
-        }
+        }      
 
         .header {
             display: flex;
@@ -90,29 +90,6 @@
         .welcome-message p {
             margin-bottom: 20px;
         }
-
-        .admin-login {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        .admin-login a {
-            text-decoration: none;
-            color: #007bff;
-            border: 2px solid #007bff;
-            padding: 8px 16px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            background-color: white;
-        }
-
-        .admin-login a:hover {
-            background-color: #007bff;
-            color: white;
-        }
     </style>
 </head>
 <body>
@@ -121,24 +98,19 @@
             <h1>Examothèque</h1>
             <br><h3>&nbsp;&nbsp;&nbsp;Banque d'épreuves</h3></br>
         </div>
-
+        
         <div class="auth-links">
-            <a href="connexion_etu.html" class="login-link">Connexion</a>
+            <a href="connexion.html" class="login-link">Connexion</a>
             <a href="inscription.html" class="register-link">Créer un compte</a>
         </div>
     </div>
 
     <div class="main-content">
-        <div class="welcome-message">
-            <img src="image/img_eleve.jpg" alt="Illustration" style="max-width: 100%; height: auto; margin-bottom: 20px;">
-            <p>Application web ouverte et collaborative, destinée à centraliser une banque d'épreuves (examens, devoirs, partiels, etc.) disponibles au format PDF, issues de différents établissements scolaires et universitaires.</p>
-            <p>Cette plateforme permettra à tout utilisateur — élève, enseignant, encadrant ou toute personne intéressée — d'accéder facilement à des épreuves des années précédentes.</p>
-        </div>
+    <div class="welcome-message">
+        <img src="image/img_eleve.jpg" alt="Illustration" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+        <p>Application web ouverte et collaborative, destinée à centraliser une banque d'épreuves (examens, devoirs, partiels, etc.) disponibles au format PDF, issues de différents établissements scolaires et universitaires.</p>
+        <p>Cette plateforme permettra à tout utilisateur — élève, enseignant, encadrant ou toute personne intéressée — d'accéder facilement à des épreuves des années précédentes.</p>
     </div>
-
-    <!-- Bouton Connexion Administrateur en bas à gauche -->
-    <div class="admin-login">
-        <a href="connexion_admin.html">Connexion administrateur</a>
-    </div>
+</div>
 </body>
 </html>

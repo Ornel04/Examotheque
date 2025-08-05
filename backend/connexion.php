@@ -11,7 +11,7 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    header("Location: login.html");
+    header("Location: connexion_etu.html");
     exit();
 }
 
@@ -41,7 +41,7 @@ if ($user && password_verify($password, $user['mot_de_passe'])) {
 
 } else {
     // 6. Échec de l’authentification
-    header("Location: login.html");
+    header("Location: connexion_etu.html");
     exit();
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 session_start();
 session_destroy();
-header("Location: login.html");
+header("Location: connexion_etu.html");
 exit();
 ?>

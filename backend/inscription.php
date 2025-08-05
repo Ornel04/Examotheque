@@ -36,7 +36,7 @@ try {
     echo "Compte créé avec succès ! <a href='login.html'>Se connecter</a>";
 } catch (PDOException $e) {
     // En cas d'erreur (email déjà utilisé, etc.)
-    header("Location: register.html");
+    header("Location: inscription.html");
     exit();
 }
 ?>
