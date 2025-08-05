@@ -1,21 +1,21 @@
 <?php
 session_start();
 
-// 1. Connexion à la base de données
-$host = '192.168.56.80';
-$dbname = 'register';
-$user = 'user';
-$pass = 'mdp';
+// Récupérer les infos DB depuis les variables d'environnement Docker
+$host = getenv('DB_HOST') ?: 'db';        // le nom du service Docker db
+$dbname = getenv('DB_NAME') ?: 'examotheque';
+$user = getenv('DB_USER') ?: 'user';
+$pass = getenv('DB_PASSWORD') ?: 'password';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    header("Location: connexion_etu.html");
+    // En cas d'erreur, rediriger vers la page de connexion (ou afficher un message)
+    header("Location: http://localhost:3000/admin/connexion.html");
     exit();
 }
 
-// 2. Récupération des données du formulaire
 $email = $_POST['email'] ?? '';
 $password = $_POST['password'] ?? '';
 
@@ -23,14 +23,11 @@ if (empty($email) || empty($password)) {
     die("Veuillez remplir tous les champs.");
 }
 
-// 3. Recherche de l'utilisateur par email
-$stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = ?");
+$stmt = $pdo->prepare("SELECT * FROM utilisateur_etudiants WHERE email = ?");
 $stmt->execute([$email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// 4. Vérification du mot de passe
 if ($user && password_verify($password, $user['mot_de_passe'])) {
-    // 5. Authentification réussie
     $_SESSION['utilisateur_id'] = $user['id'];
     $_SESSION['nom'] = $user['nom'];
     $_SESSION['prenom'] = $user['prenom'];
@@ -38,10 +35,8 @@ if ($user && password_verify($password, $user['mot_de_passe'])) {
 
     header("Location: accueil.php");
     exit();
-
 } else {
-    // 6. Échec de l’authentification
-    header("Location: connexion_etu.html");
+    header("Location: http://localhost:3000/connexion_etu.html?error=1");
     exit();
 }
 ?>

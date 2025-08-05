@@ -6,16 +6,17 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
+// Vérifie si l'utilisateur est connecté
 if (!isset($_SESSION['utilisateur_id'])) {
-    header("Location: login.html");
+    header("Location: http://localhost:3000/etu/connexion.html");
     exit();
 }
 
-// Connexion à la base de données
-$host = '192.168.56.80';
-$dbname = 'register';
-$user = 'user';
-$pass = 'mdp';
+// Connexion à la base de données avec variables d'environnement Docker
+$host = getenv('DB_HOST') ?: 'db';
+$dbname = getenv('DB_NAME') ?: 'examotheque';
+$user = getenv('DB_USER') ?: 'user';
+$pass = getenv('DB_PASSWORD') ?: 'password';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass, [
@@ -56,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-family: Arial, sans-serif;
       padding: 20px;
       margin: 0;
+      background: #f9f9f9;
     }
     .top-bar {
       display: flex;
@@ -63,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       align-items: center;
       padding: 10px 20px;
       background-color: #f4f4f4;
+      border-bottom: 1px solid #ddd;
     }
     .top-bar a {
       text-decoration: none;
@@ -87,8 +90,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     input[type="text"], select {
       width: 300px;
-      padding: 5px;
+      padding: 8px;
       margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 15px;
+      padding: 8px 15px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
     .error {
       color: red;
@@ -99,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Empêche l’affichage en cache quand on revient en arrière
     window.addEventListener('pageshow', function(event) {
       if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-        // Recharge la page, donc refait la vérification de session côté serveur
         window.location.reload();
       }
     });
@@ -108,16 +127,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
   <div class="top-bar">
-    <a href="logout.php">Se déconnecter</a>
+    <a href="deconnexion.php">Se déconnecter</a>
   </div>
 
   <h1>Sélectionnez votre École / Université</h1>
 
   <form method="POST" action="">
     <label for="ecole">École / Université :</label>
-    <input type="text" id="ecole" name="ecole" value="<?= htmlspecialchars($ecole) ?>" autocomplete="off" />
+    <input
+      type="text"
+      id="ecole"
+      name="ecole"
+      value="<?= htmlspecialchars($ecole) ?>"
+      autocomplete="off"
+      required
+    />
 
-    <button type="submit" style="margin-top: 15px;">Valider</button>
+    <button type="submit">Valider</button>
   </form>
 
   <?php if ($error): ?>
@@ -135,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endforeach; ?>
       </select>
 
-      <button type="submit" style="margin-top: 15px;">Suivant</button>
+      <button type="submit">Suivant</button>
     </form>
   <?php endif; ?>
 

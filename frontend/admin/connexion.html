@@ -13,7 +13,7 @@
             margin: 0;
             
             /* Image de fond */
-            background-image: url('image/fond_ecran.png');
+            background-image: url('../image/fond_ecran.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -65,14 +65,11 @@
 <body>
   <div class="login-container">
     <h2>Connexion</h2>
-    <form action="connexion.php" method="POST">
+    <form action="http://localhost:8000/admin/connexion.php" method="POST">
       <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Mot de passe" required>
       <button type="submit">Se connecter</button>
     </form>
-    <div class="register-container">
-      <p>Pas de compte ? <a href="inscription.html">Créer un compte</a></p>
-    </div>
   </div>
 </body>
 </html>
