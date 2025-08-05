@@ -2,20 +2,22 @@ version: '3.8'
 
 services:
   frontend:
-    build: ../frontend
+    build:
+      context: ./../frontend
     ports:
       - "3000:3000"
     volumes:
-      - ../frontend:/app
+      - ./../frontend:/app
     depends_on:
       - backend
 
   backend:
-    build: ../backend
+    build:
+      context: ./../backend
     ports:
       - "8000:8000"
     volumes:
-      - ../backend:/app
+      - ./../backend:/app
     environment:
       - DB_HOST=db
       - DB_PORT=5432
