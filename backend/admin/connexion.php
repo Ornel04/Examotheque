@@ -23,12 +23,12 @@ if (empty($email) || empty($password)) {
     die("Veuillez remplir tous les champs.");
 }
 
-$stmt = $pdo->prepare("SELECT * FROM utilisateur_etudiants WHERE email = ?");
+$stmt = $pdo->prepare("SELECT * FROM utilisateur_admins WHERE email = ?");
 $stmt->execute([$email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user && password_verify($password, $user['mot_de_passe'])) {
-    $_SESSION['utilisateur_id'] = $user['id'];
+    $_SESSION['admin_id'] = $user['id'];
     $_SESSION['nom'] = $user['nom'];
     $_SESSION['prenom'] = $user['prenom'];
     $_SESSION['email'] = $user['email'];
@@ -36,7 +36,7 @@ if ($user && password_verify($password, $user['mot_de_passe'])) {
     header("Location: accueil.php");
     exit();
 } else {
-    header("Location: http://localhost:3000/connexion_etu.html?error=1");
+    header("Location: http://localhost:3000/admin/connexion.html?error=1");
     exit();
 }
 ?>
