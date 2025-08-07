@@ -16,3 +16,14 @@ CREATE TABLE IF NOT EXISTS utilisateur_admins (
     email VARCHAR(255) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS download_epreuve (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ecole_universite TEXT NOT NULL,
+    site_ville TEXT NOT NULL,
+    classe_niveau TEXT NOT NULL,
+    annee_academique TEXT NOT NULL,
+    option_filiere TEXT NOT NULL,
+    ue TEXT NOT NULL,
+    matiere TEXT NOT NULL
+);

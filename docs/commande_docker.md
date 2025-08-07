@@ -21,3 +21,7 @@ docker system df
 
 # methode 2
 docker system prune -a --volumes --force
+
+# Pour construire
+
+docker compose up --build
