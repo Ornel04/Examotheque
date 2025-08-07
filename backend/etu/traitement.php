@@ -1,149 +1,154 @@
-<?php
-session_start();
-
-// Empêche le cache
-header("Cache-Control: no-cache, no-store, must-revalidate"); 
-header("Pragma: no-cache");
-header("Expires: 0");
-
-// Vérifie la session
-if (!isset($_SESSION['utilisateur_id'])) {
-    header("Location: http://localhost:3000/etu/connexion.html");
-    exit();
-}
-
-// Connexion BDD
-$host = getenv('DB_HOST') ?: 'db';
-$dbname = getenv('DB_NAME') ?: 'examotheque';
-$user = getenv('DB_USER') ?: 'user';
-$pass = getenv('DB_PASSWORD') ?: 'password';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
-} catch (PDOException $e) {
-    die("Erreur connexion BDD : " . $e->getMessage());
-}
-
-// Récupération progressive des valeurs
-$ecole = $_POST['ecole'] ?? '';
-$site = $_POST['site'] ?? '';
-$classe = $_POST['classe'] ?? '';
-$annee = $_POST['annee'] ?? '';
-$option = $_POST['option'] ?? '';
-$ue = $_POST['ue'] ?? '';
-$matiere = $_POST['matiere'] ?? '';
-
-// Préparer les prochaines options
-$classes = $annees = $options = $ues = $matieres = [];
-
-if ($site && !$classe) {
-    $stmt = $pdo->prepare("SELECT DISTINCT classe_niveau FROM download_epreuve WHERE ecole_universite = ? AND site_ville = ?");
-    $stmt->execute([$ecole, $site]);
-    $classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
-} elseif ($classe && !$annee) {
-    $stmt = $pdo->prepare("SELECT DISTINCT annee_academique FROM download_epreuve WHERE ecole_universite = ? AND site_ville = ? AND classe_niveau = ?");
-    $stmt->execute([$ecole, $site, $classe]);
-    $annees = $stmt->fetchAll(PDO::FETCH_COLUMN);
-} elseif ($annee && !$option) {
-    $stmt = $pdo->prepare("SELECT DISTINCT option_filiere FROM download_epreuve WHERE ecole_universite = ? AND site_ville = ? AND classe_niveau = ? AND annee_academique = ?");
-    $stmt->execute([$ecole, $site, $classe, $annee]);
-    $options = $stmt->fetchAll(PDO::FETCH_COLUMN);
-} elseif ($option && !$ue) {
-    $stmt = $pdo->prepare("SELECT DISTINCT ue FROM download_epreuve WHERE ecole_universite = ? AND site_ville = ? AND classe_niveau = ? AND annee_academique = ? AND option_filiere = ?");
-    $stmt->execute([$ecole, $site, $classe, $annee, $option]);
-    $ues = $stmt->fetchAll(PDO::FETCH_COLUMN);
-} elseif ($ue && !$matiere) {
-    $stmt = $pdo->prepare("SELECT DISTINCT matiere FROM download_epreuve WHERE ecole_universite = ? AND site_ville = ? AND classe_niveau = ? AND annee_academique = ? AND option_filiere = ? AND ue = ?");
-    $stmt->execute([$ecole, $site, $classe, $annee, $option, $ue]);
-    $matieres = $stmt->fetchAll(PDO::FETCH_COLUMN);
-}
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Sélection Étapes</title>
+  <meta charset="UTF-8" />
+  <title>Banque Épreuve</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #f4f4f4;
+      border-bottom: 1px solid #ddd;
+    }
+    .top-bar a {
+      text-decoration: none;
+      color: #e74c3c;
+      font-weight: bold;
+      border: 1px solid #e74c3c;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .top-bar a:hover {
+      background-color: #e74c3c;
+      color: white;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="text"], select {
+      width: 300px;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+  <script>
+    // Empêche l’affichage en cache quand on revient en arrière
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload();
+      }
+    });
+  </script>
 </head>
 <body>
 
-<h2>Navigation progressive des épreuves</h2>
+<div class="top-bar">
+  <div style="font-size: 1.5em; font-weight: bold; color: black;">Examothèque</div>
+  <a href="deconnexion.php">Se déconnecter</a>
+</div>
+
+<h3>Sélectionnez votre École / Université et autres critères</h3>
+
+<?php if (!empty($data['error'])): ?>
+  <p class="error"><?= htmlspecialchars($data['error']) ?></p>
+<?php endif; ?>
 
 <form method="POST" action="">
-  <input type="hidden" name="ecole" value="<?= htmlspecialchars($ecole) ?>">
-  <input type="hidden" name="site" value="<?= htmlspecialchars($site) ?>">
-  <input type="hidden" name="classe" value="<?= htmlspecialchars($classe) ?>">
-  <input type="hidden" name="annee" value="<?= htmlspecialchars($annee) ?>">
-  <input type="hidden" name="option" value="<?= htmlspecialchars($option) ?>">
-  <input type="hidden" name="ue" value="<?= htmlspecialchars($ue) ?>">
+  <label for="ecole">École / Université :</label>
+  <input
+    type="text"
+    id="ecole"
+    name="ecole"
+    list="ecoles-list"
+    value="<?= htmlspecialchars($data['ecole']) ?>"
+    autocomplete="off"
+    required
+    onchange="this.form.submit()"
+  />
+  <datalist id="ecoles-list">
+    <?php foreach ($data['listeEcoles'] as $uneEcole): ?>
+      <option value="<?= htmlspecialchars($uneEcole) ?>"></option>
+    <?php endforeach; ?>
+  </datalist>
 
-  <?php if ($site && !$classe): ?>
-    <label for="classe">Classe / Niveau :</label>
-    <select name="classe" required>
+  <?php if (!empty($data['sites'])): ?>
+    <label for="site">Site / Ville :</label>
+    <select name="site" id="site" onchange="this.form.submit()" required>
       <option value="">-- Choisissez --</option>
-      <?php foreach ($classes as $c): ?>
-        <option value="<?= htmlspecialchars($c) ?>"><?= htmlspecialchars($c) ?></option>
+      <?php foreach ($data['sites'] as $s): ?>
+        <option value="<?= htmlspecialchars($s) ?>" <?= $s === $data['site'] ? 'selected' : '' ?>><?= htmlspecialchars($s) ?></option>
       <?php endforeach; ?>
     </select>
-    <button type="submit">Suivant</button>
-
-  <?php elseif ($classe && !$annee): ?>
-    <label for="annee">Année académique :</label>
-    <select name="annee" required>
-      <option value="">-- Choisissez --</option>
-      <?php foreach ($annees as $a): ?>
-        <option value="<?= htmlspecialchars($a) ?>"><?= htmlspecialchars($a) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button type="submit">Suivant</button>
-
-  <?php elseif ($annee && !$option): ?>
-    <label for="option">Option / Filière :</label>
-    <select name="option" required>
-      <option value="">-- Choisissez --</option>
-      <?php foreach ($options as $o): ?>
-        <option value="<?= htmlspecialchars($o) ?>"><?= htmlspecialchars($o) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button type="submit">Suivant</button>
-
-  <?php elseif ($option && !$ue): ?>
-    <label for="ue">Unité d'enseignement (UE) :</label>
-    <select name="ue" required>
-      <option value="">-- Choisissez --</option>
-      <?php foreach ($ues as $u): ?>
-        <option value="<?= htmlspecialchars($u) ?>"><?= htmlspecialchars($u) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button type="submit">Suivant</button>
-
-  <?php elseif ($ue && !$matiere): ?>
-    <label for="matiere">Matière :</label>
-    <select name="matiere" required>
-      <option value="">-- Choisissez --</option>
-      <?php foreach ($matieres as $m): ?>
-        <option value="<?= htmlspecialchars($m) ?>"><?= htmlspecialchars($m) ?></option>
-      <?php endforeach; ?>
-    </select>
-    <button type="submit">Terminer</button>
-
-  <?php elseif ($matiere): ?>
-    <p><strong>Sélection complète :</strong></p>
-    <ul>
-      <li>École : <?= htmlspecialchars($ecole) ?></li>
-      <li>Site : <?= htmlspecialchars($site) ?></li>
-      <li>Classe : <?= htmlspecialchars($classe) ?></li>
-      <li>Année : <?= htmlspecialchars($annee) ?></li>
-      <li>Option : <?= htmlspecialchars($option) ?></li>
-      <li>UE : <?= htmlspecialchars($ue) ?></li>
-      <li>Matière : <?= htmlspecialchars($matiere) ?></li>
-    </ul>
-    <!-- Ici, tu peux rediriger ou afficher les fichiers -->
-    <p><a href="liste_epreuves.php?ecole=<?= urlencode($ecole) ?>&site=<?= urlencode($site) ?>&classe=<?= urlencode($classe) ?>&annee=<?= urlencode($annee) ?>&option=<?= urlencode($option) ?>&ue=<?= urlencode($ue) ?>&matiere=<?= urlencode($matiere) ?>">Afficher les épreuves</a></p>
-
   <?php endif; ?>
+
+  <?php if (!empty($data['classes'])): ?>
+    <label for="classe">Classe / Niveau :</label>
+    <select name="classe" id="classe" onchange="this.form.submit()" required>
+      <option value="">-- Choisissez --</option>
+      <?php foreach ($data['classes'] as $c): ?>
+        <option value="<?= htmlspecialchars($c) ?>" <?= $c === $data['classe'] ? 'selected' : '' ?>><?= htmlspecialchars($c) ?></option>
+      <?php endforeach; ?>
+    </select>
+  <?php endif; ?>
+
+  <?php if (!empty($data['annees'])): ?>
+    <label for="annee">Année académique :</label>
+    <select name="annee" id="annee" onchange="this.form.submit()" required>
+      <option value="">-- Choisissez --</option>
+      <?php foreach ($data['annees'] as $a): ?>
+        <option value="<?= htmlspecialchars($a) ?>" <?= $a === $data['annee'] ? 'selected' : '' ?>><?= htmlspecialchars($a) ?></option>
+      <?php endforeach; ?>
+    </select>
+  <?php endif; ?>
+
+  <?php if (!empty($data['options'])): ?>
+    <label for="option">Option / Filière :</label>
+    <select name="option" id="option" onchange="this.form.submit()" required>
+      <option value="">-- Choisissez --</option>
+      <?php foreach ($data['options'] as $opt): ?>
+        <option value="<?= htmlspecialchars($opt) ?>" <?= $opt === $data['option'] ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option>
+      <?php endforeach; ?>
+    </select>
+  <?php endif; ?>
+
+  <?php if (!empty($data['ues'])): ?>
+    <label for="ue">UE :</label>
+    <select name="ue" id="ue" onchange="this.form.submit()" required>
+      <option value="">-- Choisissez --</option>
+      <?php foreach ($data['ues'] as $u): ?>
+        <option value="<?= htmlspecialchars($u) ?>" <?= $u === $data['ue'] ? 'selected' : '' ?>><?= htmlspecialchars($u) ?></option>
+      <?php endforeach; ?>
+    </select>
+  <?php endif; ?>
+
+  <?php if (!empty($data['matieres'])): ?>
+    <label for="matiere">Matière :</label>
+    <select name="matiere" id="matiere" onchange="this.form.submit()" required>
+      <option value="">-- Choisissez --</option>
+      <?php foreach ($data['matieres'] as $m): ?>
+        <option value="<?= htmlspecialchars($m) ?>" <?= $m === $data['matiere'] ? 'selected' : '' ?>><?= htmlspecialchars($m) ?></option>
+      <?php endforeach; ?>
+    </select>
+  <?php endif; ?>
+
 </form>
 
 </body>
