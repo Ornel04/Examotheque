@@ -177,10 +177,12 @@
   <h3>Épreuves disponibles :</h3>
   <ul class="epreuves-list">
     <?php foreach ($data['epreuves'] as $epreuve): ?>
-      <li>
-        <?= htmlspecialchars($epreuve['nom_epreuve']) ?>
-        <a href="telecharger.php?id=<?= urlencode($epreuve['id']) ?>" class="btn-download" target="_blank" rel="noopener noreferrer">Télécharger</a>
-      </li>
+      <?php if (!empty($epreuve['nom_epreuve']) && !empty($epreuve['fichier_path'])): ?>
+        <li>
+          <?= htmlspecialchars($epreuve['nom_epreuve']) ?>
+          <a href="download.php?id=<?= urlencode($epreuve['id']) ?>" class="btn-download" target="_blank" rel="noopener noreferrer">Télécharger</a>
+        </li>
+      <?php endif; ?>
     <?php endforeach; ?>
   </ul>
 <?php endif; ?>
