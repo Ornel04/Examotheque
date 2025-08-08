@@ -173,16 +173,21 @@
   <?php endif; ?>
 </form>
 
-<?php if (!empty($data['epreuves'])): ?>
-  <h3>Épreuves disponibles :</h3>
-  <ul class="epreuves-list">
-    <?php foreach ($data['epreuves'] as $epreuve): ?>
-      <li>
-        <?= htmlspecialchars($epreuve['nom_epreuve']) ?>
-        <a href="telecharger.php?id=<?= urlencode($epreuve['id']) ?>" class="btn-download" target="_blank" rel="noopener noreferrer">Télécharger</a>
-      </li>
-    <?php endforeach; ?>
-  </ul>
+<?php if (
+  $data['ecole'] !== '' &&
+  $data['site'] !== '' &&
+  $data['classe'] !== '' &&
+  $data['annee'] !== '' &&
+  $data['option'] !== '' &&
+  $data['ue'] !== '' &&
+  $data['matiere'] !== ''
+): ?>
+  <div style="margin-top: 30px; padding: 15px; border-top: 1px solid #ccc;">
+    <?php 
+      // Inclusion du formulaire et traitement d'ajout d'épreuve PDF
+      require 'upload_epreuve.php'; 
+    ?>
+  </div>
 <?php endif; ?>
 
 </body>
