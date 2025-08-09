@@ -113,6 +113,18 @@
             background-color: #007bff;
             color: white;
         }
+
+        /* Pied de page en bas à droite */
+        .footer-credit {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+            z-index: 1000;
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -123,8 +135,8 @@
         </div>
 
         <div class="auth-links">
-            <a href="etu/connexion.html" class="login-link">Connexion</a>
-            <a href="etu/inscription.html" class="register-link">Créer un compte</a>
+            <a href="frontend/etu/connexion.html" class="login-link">Connexion</a>
+            <a href="frontend/etu/inscription.html" class="register-link">Créer un compte</a>
         </div>
     </div>
 
@@ -138,7 +150,12 @@
 
     <!-- Bouton Connexion Administrateur en bas à gauche -->
     <div class="admin-login">
-        <a href="admin/connexion.html">Connexion administrateur</a>
+        <a href="/frontend/admin/connexion.html">Connexion administrateur</a>
     </div>
+
+    <!-- Pied de page en bas à droite -->
+    <footer class="footer-credit">
+        réalisé par Ornel ZINSOU-PLY
+    </footer>
 </body>
 </html>

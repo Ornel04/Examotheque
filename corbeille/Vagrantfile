@@ -1,0 +1,96 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  # Machine 1: database-server
+  config.vm.define "database-server" do |machine_db|
+    machine_db.vm.hostname = "database-server"
+    machine_db.vm.box = "chavinje/fr-book-64"
+    machine_db.vm.network :private_network, ip: "192.168.56.80"
+    #machine_db.vm.network "public_network",use_dhcp_assigned_default_route: true
+    # Un repertoire partagé est un plus mais demande beaucoup plus
+    # de travail - a voir à la fin
+    #machine.vm.synced_folder "./data", "/vagrant_data", SharedFoldersEnableSymlinksCreate: false
+
+    machine_db.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--name", "database-server"]
+      v.customize ["modifyvm", :id, "--groups", "/database"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--memory", 2*512]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    end
+   
+    machine_db.vm.provision "shell", path: "scripts/install_sys.sh"
+    machine_db.vm.provision "shell", path: "scripts/install_web.sh"
+    machine_db.vm.provision "shell", path: "scripts/install_bdd.sh"
+    machine_db.vm.provision "shell", path: "scripts/install_myadmin.sh"
+    machine_db.vm.provision "shell", path: "scripts/install_moodle.sh"
+
+    machine_db.vm.provision "shell", inline: <<-SHELL
+    # Script pour changer bind-address 127.0.0.1 à 0.0.0.0
+    echo "Modification de la configuration MySQL : bind-address à 0.0.0.0"
+    sed -i 's/^bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+    # Vérification que le changement a bien été effectué
+    grep 'bind-address' /etc/mysql/mariadb.conf.d/50-server.cnf
+    # Redémarrage de MySQL pour appliquer les changements
+    systemctl restart mysql
+    echo "MySQL redémarré après modification du bind-address."
+  SHELL
+  end
+
+
+  # Machine 2: srv-web
+  config.vm.define "srv-web" do |machine_web|
+    machine_web.vm.hostname = "srv-web"
+    machine_web.vm.box = "chavinje/fr-book-64"
+    machine_web.vm.network :private_network, ip: "192.168.56.81"
+    #machine_web.vm.network "public_network",use_dhcp_assigned_default_route: true, :mac => "0800270D8AC8"
+    # Un repertoire partagé est un plus mais demande beaucoup plus
+    # de travail - a voir à la fin
+    #machine.vm.synced_folder "./data", "/vagrant_data", SharedFoldersEnableSymlinksCreate: false
+
+    machine_web.vm.provider :virtualbox do |v|
+      v.customize ["modifyvm", :id, "--name", "srv-web"]
+      v.customize ["modifyvm", :id, "--groups", "/web"]
+      v.customize ["modifyvm", :id, "--cpus", "2"]
+      v.customize ["modifyvm", :id, "--memory", 2*512]
+      v.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+      v.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    end
+
+    machine_web.vm.provision "shell", path: "scripts/install_sys.sh"
+    machine_web.vm.provision "shell", path: "scripts/install_web.sh"
+    machine_web.vm.provision "shell", path: "scripts/install_myadmin.sh"
+  end
+
+  # Machine 3: ssh-https
+  #config.vm.define "ssh-https" do |machine_ssh|
+  #  machine_ssh.vm.hostname = "ssh-https"
+  #  machine_ssh.vm.box = "chavinje/fr-book-64"
+  #  machine_ssh.vm.network :private_network, ip: "192.168.56.82"
+  #  machine_ssh.vm.network "public_network",use_dhcp_assigned_default_route: true, :mac => "080027E0997F"
+    # Un repertoire partagé est un plus mais demande beaucoup plus
+    # de travail - a voir à la fin
+    #machine.vm.synced_folder "./data", "/vagrant_data", SharedFoldersEnableSymlinksCreate: false
+
+  #  machine_ssh.vm.provider :virtualbox do |v|
+  #    v.customize ["modifyvm", :id, "--name", "ssh-https"]
+  #    v.customize ["modifyvm", :id, "--groups", "/S7-projet/ssh"]
+  #    v.customize ["modifyvm", :id, "--cpus", "1"]
+  #    v.customize ["modifyvm", :id, "--memory", 512]
+  #    v.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+  #    v.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+  #  end
+  #  config.vm.provision "shell", inline: <<-SHELL
+  #    sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/g' /etc/ssh/sshd_config    
+  #    sleep 3
+  #    service ssh restart
+  #  SHELL
+  #  machine_ssh.vm.provision "shell", path: "scripts/install_sys.sh"
+  #  machine_ssh.vm.provision "shell", path: "scripts/proxy.sh"
+  #end
+
+end
+
