@@ -5,10 +5,19 @@
   <title>Banque Épreuve</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      /*font-family: Arial, sans-serif;
       padding: 20px;
       margin: 0;
-      background: #f9f9f9;
+      background: #f9f9f9;*/
+
+     font-family: Arial, sans-serif;
+     padding: 20px;
+     margin: 0;
+     background-image: url('http://localhost:3000/image/fond_ecran_site.png');
+     background-size: cover;
+     background-position: center;
+     background-repeat: no-repeat;
+     background-attachment: fixed;
     }
     .top-bar {
       display: flex;
@@ -83,10 +92,35 @@
 </head>
 <body>
 
+<?php
+// Récupérer les infos DB depuis variables d'environnement Docker
+$host = getenv('DB_HOST') ?: 'db';
+$dbname = getenv('DB_NAME') ?: 'examotheque';
+$user = getenv('DB_USER') ?: 'user';
+$pass = getenv('DB_PASSWORD') ?: 'password';
+
+// Supposons que $email est défini (par exemple depuis la session)
+$email = $_SESSION['email'] ?? null;
+
+if ($email) {
+    $stmt = $pdo->prepare("SELECT nom, prenom FROM utilisateur_etudiants WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+?>
+
 <div class="top-bar">
   <div style="font-size: 1.5em; font-weight: bold; color: black;">Examothèque</div>
   <a href="deconnexion.php">Se déconnecter</a>
 </div>
+
+<div style="margin: 20px 0; font-style: italic; color: #555; font-size: 1.2em;">
+  Votre savoir, votre réussite, à portée de main, 
+  <strong>
+    <?= isset($user) ? htmlspecialchars($user['prenom'] . ' ' . $user['nom']) : 'Prénom Nom' ?>
+  </strong>
+</div>
+
 
 <h3>Sélectionnez votre École / Université et autres critères</h3>
 
