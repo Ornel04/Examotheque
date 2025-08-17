@@ -19,7 +19,9 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                    bat """
+                    echo %DOCKER_PASS% | docker login --username %DOCKER_USER% --password-stdin
+                    """
                 }
             }
         }
@@ -38,7 +40,7 @@ pipeline {
 
         stage('Deploy (Optional)') {
             steps {
-                  echo 'Stage déploiement optionnel désactivé'
+                echo 'Stage déploiement optionnel désactivé'
             }
         }
     }
