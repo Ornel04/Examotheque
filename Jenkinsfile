@@ -11,7 +11,6 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Récupérer le code depuis Git
                 git branch: 'develop', url: 'https://github.com/Ornel04/Examotheque.git'
             }
         }
@@ -19,8 +18,9 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    // Utilisation de cmd pour Windows
                     bat """
-                    echo %DOCKER_PASS% | docker login --username %DOCKER_USER% --password-stdin
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
                     """
                 }
             }
