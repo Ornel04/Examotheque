@@ -18,7 +18,6 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    // Utilisation de cmd pour Windows
                     bat """
                     echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
                     """
@@ -35,6 +34,13 @@ pipeline {
         stage('Push Images') {
             steps {
                 bat 'docker-compose push'
+            }
+        }
+
+        stage('Deploy Local') {
+            steps {
+                echo 'Déploiement local des conteneurs...'
+                bat 'docker-compose up -d'
             }
         }
 
