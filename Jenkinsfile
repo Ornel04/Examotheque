@@ -38,8 +38,7 @@ pipeline {
 
         stage('Deploy (Optional)') {
             steps {
-                // Si tu veux déployer sur un serveur via SSH
-                // sh 'ssh user@monserveur "docker-compose pull && docker-compose up -d"'
+                  echo 'Stage déploiement optionnel désactivé'
             }
         }
     }
