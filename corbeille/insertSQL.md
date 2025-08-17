@@ -8,18 +8,20 @@ INSERT INTO `download_epreuve` (`id`, `ecole_universite`, `site_ville`, `classe_
 (14, 'INSA', 'nantes', 'L3', '2021-2022', 'systèmes embarqués', 'Electronique numérique', 'Microcontrôleurs', NULL, NULL),
 (13, 'INSA', 'strasbourg', 'L2', '2022-2023', 'réseaux', 'Sécurité des réseaux', 'Firewall', NULL, NULL),
 (12, 'INSA', 'lyon', 'L1', '2023-2024', 'informatique', 'Programmation avancée', 'Java', NULL, NULL),
-(11, 'ESEO', 'paris', '5iem', '2021-2022', 'CSS', 'Infrastructure serveurs Microsoft', 'PowerShell avancé', NULL, NULL),
-(10, 'ESEO', 'angers', '4iem', '2022-2023', 'EOC', 'Infrastructure serveurs Microsoft', 'Sécurité Windows Server', NULL, NULL),
-(9, 'ESEO', 'dijon', '5iem', '2021-2022', 'general', 'Infrastructure serveurs Microsoft', 'Hyper-V', NULL, NULL),
-(8, 'ESEO', 'paris', '4iem', '2022-2023', 'CSS', 'Infrastructure serveurs Microsoft', 'Exchange Server', NULL, NULL),
-(7, 'ESEO', 'angers', '3iem', '2023-2024', 'EOC', 'Infrastructure serveurs Microsoft', 'Active Directory', NULL, NULL),
-(6, 'ESEO', 'dijon', '5iem', '2021-2022', 'CSS', 'Administration des systèmes linux', 'Gestion des utilisateurs', NULL, NULL),
-(5, 'ESEO', 'paris', '4iem', '2022-2023', 'general', 'Introduction à la cybersécurité', 'Audit de sécurité', NULL, NULL),
-(1, 'ESEO', 'angers', '3iem', '2023-2024', 'general', 'Architecture des Data-Centers', 'Réseaux et virtualisation', NULL, NULL),
-(2, 'ESEO', 'paris', '4iem', '2022-2023', 'CSS', 'Architecture des Data-Centers', 'Stockage et sauvegarde', NULL, NULL),
-(3, 'ESEO', 'dijon', '5iem', '2021-2022', 'EOC', 'Introduction à la cybersécurité', 'Cryptographie', NULL, NULL),
-(4, 'ESEO', 'angers', '3iem', '2023-2024', 'CSS', 'Introduction à la cybersécurité', 'Sécurité réseau', NULL, NULL);
-
+(11, 'ESEO', 'paris', '5ème année', '2021-2022', 'CSS', 'Infrastructure serveurs Microsoft', 'PowerShell avancé', NULL, NULL),
+(10, 'ESEO', 'angers', '4ème année', '2022-2023', 'EOC', 'Infrastructure serveurs Microsoft', 'Sécurité Windows Server', NULL, NULL),
+(9, 'ESEO', 'dijon', '5ème année', '2021-2022', 'general', 'Infrastructure serveurs Microsoft', 'Hyper-V', NULL, NULL),
+(8, 'ESEO', 'paris', '4ème année', '2022-2023', 'CSS', 'Infrastructure serveurs Microsoft', 'Exchange Server', NULL, NULL),
+(7, 'ESEO', 'angers', '3ème année', '2023-2024', 'EOC', 'Infrastructure serveurs Microsoft', 'Active Directory', NULL, NULL),
+(6, 'ESEO', 'dijon', '5ème année', '2021-2022', 'CSS', 'Administration des systèmes linux', 'Gestion des utilisateurs', NULL, NULL),
+(5, 'ESEO', 'paris', '4ème année', '2022-2023', 'general', 'Introduction à la cybersécurité', 'Audit de sécurité', NULL, NULL),
+(1, 'ESEO', 'angers', '3ème année', '2023-2024', 'general', 'Architecture des Data-Centers', 'Réseaux et virtualisation', NULL, NULL),
+(2, 'ESEO', 'paris', '4ème année', '2022-2023', 'CSS', 'Architecture des Data-Centers', 'Stockage et sauvegarde', NULL, NULL),
+(3, 'ESEO', 'dijon', '5ème année', '2021-2022', 'EOC', 'Introduction à la cybersécurité', 'Cryptographie', NULL, NULL),
+(4, 'ESEO', 'angers', '3ème année', '2023-2024', 'CSS', 'Introduction à la cybersécurité', 'Sécurité réseau', NULL, NULL),
+(21, 'IAE', 'Nantes', 'L1', '2019-2020', 'Banque Finance', 'Data', 'Marché financier', NULL, NULL),
+(22, 'IAE', 'Nantes', 'L3', '2019-2020', 'Banque', 'Data', 'financier', NULL, NULL),
+(23, 'IAE', 'Nantes', 'L3', '2021-2022', 'Banque', 'Data', 'financier', NULL, NULL);
 
 
 INSERT INTO `utilisateur_admins` (`id`, `nom`, `prenom`, `email`, `mot_de_passe`) VALUES
