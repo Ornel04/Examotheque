@@ -8,14 +8,22 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - blackbox
 
   grafana:
     image: grafana/grafana
     container_name: grafana
     ports:
-      - "3030:3000"   # Grafana accessible sur http://localhost:3030
+      - "3030:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
+
+  blackbox:
+    image: prom/blackbox-exporter
+    container_name: blackbox
+    ports:
+      - "9115:9115"  # port par défaut pour blackbox exporter

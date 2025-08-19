@@ -17,7 +17,7 @@
     cd C:\Prometheus
     .\prometheus.exe --config.file=prometheus.yml
 
-    http://localhost:9090
+    http://localhost:9090   http://prometheus:9090
 
 #Pour acceder a Grafana ( admin / admin pour le logini et mdp )
-    http://localhost:3000/login
+    http://localhost:3030/login

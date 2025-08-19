@@ -6,3 +6,19 @@ scrape_configs:
   - job_name: "prometheus"
     static_configs:
       - targets: ["prometheus:9090"]
+
+  # Monitoring de examotheque.html via Blackbox Exporter
+  - job_name: "examotheque"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # vérifie que la page retourne un code 2xx
+    static_configs:
+      - targets:
+          - http://host.docker.internal:3000/examotheque.html
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115  # adresse du Blackbox Exporter
