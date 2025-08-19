@@ -39,8 +39,17 @@ pipeline {
 
         stage('Deploy Local') {
             steps {
-                echo 'Déploiement local des conteneurs...'
+                echo 'Déploiement local des conteneurs backend et frontend...'
                 bat 'docker-compose up -d'
+            }
+        }
+
+        stage('Deploy Monitoring') {
+            steps {
+                echo 'Déploiement de Prometheus et Grafana...'
+                dir('infra/monitoring') {
+                    bat 'docker-compose up -d'
+                }
             }
         }
 
